@@ -1,5 +1,1 @@
-[
-  { "name": "1-cover.jpg", "query": "?shot=cover&photo=pier&caption=Sunset%20Heist", "w": 1080, "h": 1080 },
-  { "name": "2-editor.jpg", "query": "?shot=editor&photo=boulevard&caption=Boulevard%20Queen", "w": 1280, "h": 720 },
-  { "name": "3-cover.jpg", "query": "?shot=cover&photo=boulevard&caption=Boulevard%20Queen", "w": 1080, "h": 1080 }
-]
+[{"h":720,"name":"1-cover.jpg","query":"?shot=cover&layout=trio&grade=sunset&size=1920x1080&caption=VICE%20SUNSET&sub=ONE%20LAST%20RIDE%20DOWN%20OCEAN%20DRIVE","w":1280},{"h":860,"name":"2-editor.jpg","query":"?shot=editor&layout=trio&grade=sunset&size=1080x1080&caption=VICE%20SUNSET&sub=ONE%20LAST%20RIDE%20DOWN%20OCEAN%20DRIVE","w":1280},{"h":1280,"name":"3-cover.jpg","query":"?shot=cover&layout=five&grade=neon&size=1080x1350&caption=NEON%20NIGHTS&sub=VICE%20CITY%20AFTER%20DARK","w":1024},{"h":1080,"name":"4-cover.jpg","query":"?shot=cover&layout=quartet&grade=pastel&size=1080x1080&caption=PASTEL%20VICE&sub=SUNSET%20ON%20THE%20BOULEVARD","w":1080}]

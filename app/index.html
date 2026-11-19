@@ -3,20 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Sunset Split — GTA-style cover maker</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+  <section class="panel" aria-label="Cover controls">
+    <h1>VICE SUNSET<br>SPLIT</h1>
+    <p class="tag">Turn your photos into a diagonal-split Vice City cover. Load photos, pick a layout and a grade, write the caption, export the PNG.</p>
+
+    <fieldset>
+      <legend>1 · Photos</legend>
+      <label class="file-label">Add your photos
+        <input id="photos" type="file" accept="image/*" multiple>
+      </label>
+      <div class="row">
+        <button id="sample-photos" type="button">Use sample photos</button>
+        <button id="shuffle-photos" type="button">Shuffle panels</button>
+      </div>
+      <p class="hint">One photo fills every panel, or several photos — one per panel. Click a panel in the preview to pick which photo it shows.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>2 · Layout</legend>
+      <div class="choice-row" id="layouts">
+        <button type="button" data-layout="trio" class="picked">Diagonal Trio · 3</button>
+        <button type="button" data-layout="quartet">Neon Quartet · 4</button>
+        <button type="button" data-layout="five">Vice Five · 5</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>3 · Colour grade</legend>
+      <div class="choice-row" id="grades">
+        <button type="button" data-grade="sunset" class="picked">Vice Sunset</button>
+        <button type="button" data-grade="neon">Neon Night</button>
+        <button type="button" data-grade="pastel">Pastel Vice</button>
+        <button type="button" data-grade="noir">Noir</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>4 · Caption</legend>
+      <label>Big caption
+        <input id="caption" type="text" maxlength="28" value="VICE SUNSET">
+      </label>
+      <label>Small line under it
+        <input id="subcaption" type="text" maxlength="48" value="ONE LAST RIDE DOWN OCEAN DRIVE">
+      </label>
+      <div class="row">
+        <label class="grow">Caption size
+          <input id="caption-size" type="range" min="60" max="140" value="100">
+        </label>
+        <label class="grow">Caption height
+          <input id="caption-y" type="range" min="55" max="95" value="82">
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset id="panel-box">
+      <legend>5 · Selected panel</legend>
+      <p class="hint" id="panel-name">Panel 1 of 3 — click a panel in the preview to select it.</p>
+      <div class="row">
+        <label class="grow">Photo in this panel
+          <select id="panel-photo"></select>
+        </label>
+        <label class="grow">Zoom
+          <input id="panel-zoom" type="range" min="100" max="260" value="100">
+        </label>
+      </div>
+      <p class="hint">Drag the photo inside the preview to move it. Arrow keys nudge it too.</p>
+      <div class="row">
+        <button id="panel-prev" type="button">← Prev photo</button>
+        <button id="panel-next" type="button">Next photo →</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>6 · Export</legend>
+      <div class="choice-row" id="sizes">
+        <button type="button" data-size="1080x1080" class="picked">1080 × 1080</button>
+        <button type="button" data-size="1080x1350">1080 × 1350</button>
+        <button type="button" data-size="1920x1080">1920 × 1080</button>
+      </div>
+      <button id="export" type="button" class="export">Export PNG</button>
+      <p id="status" role="status"></p>
+    </fieldset>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <section class="stage" aria-label="Live cover preview">
+    <canvas id="cover" width="1080" height="1080" aria-label="The cover preview"></canvas>
+    <p class="stage-note">Live preview — drag a panel's photo to reposition it.</p>
+  </section>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>
