@@ -3,98 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vice Sunset Split — GTA-style cover maker</title>
-<link rel="icon" href="data:,">
+<title>Vice Sunset Split — GTA 6-style cover maker</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
-  <section class="panel" aria-label="Cover controls">
-    <h1>VICE SUNSET<br>SPLIT</h1>
-    <p class="tag">Turn your photos into a diagonal-split Vice City cover. Load photos, pick a layout and a grade, write the caption, export the PNG.</p>
+  <section class="controls" aria-label="Cover controls">
+    <header>
+      <h1>Vice Sunset Split</h1>
+      <p>Turn your photos into a GTA-style multi-panel cover. Pick a layout and a grade, fill the panels, write the caption, export a PNG.</p>
+    </header>
 
     <fieldset>
-      <legend>1 · Photos</legend>
-      <label class="file-label">Add your photos
-        <input id="photos" type="file" accept="image/*" multiple>
+      <legend>Layout</legend>
+      <div class="row" id="layouts"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Colour grade</legend>
+      <div class="row" id="grades"></div>
+    </fieldset>
+
+    <label>Caption
+      <input id="caption" type="text" maxlength="40" value="VICE CITY" autocomplete="off">
+    </label>
+    <label>Sub-caption
+      <input id="subcaption" type="text" maxlength="60" value="WELCOME BACK TO LEONIDA" autocomplete="off">
+    </label>
+
+    <fieldset>
+      <legend>Panel <span id="panelName">1</span> of <span id="panelCount">3</span></legend>
+      <p class="hint">Click a panel in the preview to pick it. Drag it to pan its photo, scroll to zoom.</p>
+      <div class="row" id="panelPhotos"></div>
+      <label>Zoom
+        <input id="panelZoom" type="range" min="1" max="2.5" step="0.01" value="1.15">
       </label>
       <div class="row">
-        <button id="sample-photos" type="button">Use sample photos</button>
-        <button id="shuffle-photos" type="button">Shuffle panels</button>
+        <button id="panelReset" type="button">Reset crop</button>
+        <button id="samePhoto" type="button">One photo everywhere</button>
       </div>
-      <p class="hint">One photo fills every panel, or several photos — one per panel. Click a panel in the preview to pick which photo it shows.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>2 · Layout</legend>
-      <div class="choice-row" id="layouts">
-        <button type="button" data-layout="trio" class="picked">Diagonal Trio · 3</button>
-        <button type="button" data-layout="quartet">Neon Quartet · 4</button>
-        <button type="button" data-layout="five">Vice Five · 5</button>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend>3 · Colour grade</legend>
-      <div class="choice-row" id="grades">
-        <button type="button" data-grade="sunset" class="picked">Vice Sunset</button>
-        <button type="button" data-grade="neon">Neon Night</button>
-        <button type="button" data-grade="pastel">Pastel Vice</button>
-        <button type="button" data-grade="noir">Noir</button>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend>4 · Caption</legend>
-      <label>Big caption
-        <input id="caption" type="text" maxlength="28" value="VICE SUNSET">
+      <label class="upload">Upload a photo for this panel
+        <input id="upload" type="file" accept="image/*">
       </label>
-      <label>Small line under it
-        <input id="subcaption" type="text" maxlength="48" value="ONE LAST RIDE DOWN OCEAN DRIVE">
-      </label>
-      <div class="row">
-        <label class="grow">Caption size
-          <input id="caption-size" type="range" min="60" max="140" value="100">
-        </label>
-        <label class="grow">Caption height
-          <input id="caption-y" type="range" min="55" max="95" value="82">
-        </label>
-      </div>
-    </fieldset>
-
-    <fieldset id="panel-box">
-      <legend>5 · Selected panel</legend>
-      <p class="hint" id="panel-name">Panel 1 of 3 — click a panel in the preview to select it.</p>
-      <div class="row">
-        <label class="grow">Photo in this panel
-          <select id="panel-photo"></select>
-        </label>
-        <label class="grow">Zoom
-          <input id="panel-zoom" type="range" min="100" max="260" value="100">
-        </label>
-      </div>
-      <p class="hint">Drag the photo inside the preview to move it. Arrow keys nudge it too.</p>
-      <div class="row">
-        <button id="panel-prev" type="button">← Prev photo</button>
-        <button id="panel-next" type="button">Next photo →</button>
-      </div>
     </fieldset>
 
     <fieldset>
-      <legend>6 · Export</legend>
-      <div class="choice-row" id="sizes">
-        <button type="button" data-size="1080x1080" class="picked">1080 × 1080</button>
-        <button type="button" data-size="1080x1350">1080 × 1350</button>
-        <button type="button" data-size="1920x1080">1920 × 1080</button>
-      </div>
-      <button id="export" type="button" class="export">Export PNG</button>
+      <legend>Export</legend>
+      <div class="row" id="sizes"></div>
+      <button id="export" type="button" class="primary">Export PNG</button>
+      <button id="demo" type="button">Load the demo photos</button>
       <p id="status" role="status"></p>
     </fieldset>
   </section>
 
-  <section class="stage" aria-label="Live cover preview">
-    <canvas id="cover" width="1080" height="1080" aria-label="The cover preview"></canvas>
-    <p class="stage-note">Live preview — drag a panel's photo to reposition it.</p>
+  <section class="stage" aria-label="Cover preview">
+    <canvas id="cover" width="1920" height="1080" aria-label="The cover preview"></canvas>
+    <p class="hint">Live preview — what you see is what the PNG holds.</p>
   </section>
 </main>
 <script type="module" src="./src/main.js"></script>

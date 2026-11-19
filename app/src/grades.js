@@ -1,49 +1,56 @@
-// The four colour grades. Each grade is a set of translucent gradient washes drawn
-// over a panel's photo with 'overlay' / 'soft-light' blending, plus a warm or cool
-// tint and a vignette, so the same photo reads as a different Vice City mood.
-// Stops are [position, colour, alpha] triples; the scrim is the dark wash behind
-// the caption at the foot of the cover.
-
+// The colour grades: each one washes the whole cover in a Vice City mood and
+// picks the accent the caption shadow and the slanted bar are drawn in.
 export const GRADES = {
   sunset: {
-    label: 'Vice Sunset',
-    washes: [
-      { mode: 'overlay', stops: [[0, '#ff9a3d', 0.55], [0.55, '#ff4d6d', 0.5], [1, '#7b2fff', 0.55]] },
-      { mode: 'soft-light', stops: [[0, '#ffd166', 0.5], [1, '#ff2e88', 0.5]] },
+    name: 'Vice Sunset',
+    // Warm orange low, hot pink high, laid over the photos.
+    wash: [
+      [0.0, 'rgba(255, 94, 77, 0.00)'],
+      [0.45, 'rgba(255, 94, 77, 0.10)'],
+      [1.0, 'rgba(214, 51, 132, 0.38)'],
     ],
-    tint: 'rgba(255, 110, 60, 0.10)',
-    scrim: ['rgba(20, 4, 40, 0)', 'rgba(20, 4, 40, 0.82)'],
-    accent: '#ffd166',
+    washMode: 'overlay',
+    photoFilter: 'saturate(1.25) contrast(1.05)',
+    accent: '#ff2e88',
+    band: 'rgba(12, 4, 24, 0.88)',
   },
   neon: {
-    label: 'Neon Night',
-    washes: [
-      { mode: 'overlay', stops: [[0, '#00e5ff', 0.5], [0.5, '#7b2fff', 0.55], [1, '#ff2e88', 0.5]] },
-      { mode: 'soft-light', stops: [[0, '#0b1030', 0.55], [1, '#ff7edb', 0.4]] },
+    name: 'Neon Night',
+    // Magenta from the top, electric cyan from the bottom.
+    wash: [
+      [0.0, 'rgba(255, 0, 128, 0.30)'],
+      [0.5, 'rgba(120, 40, 200, 0.10)'],
+      [1.0, 'rgba(0, 229, 255, 0.28)'],
     ],
-    tint: 'rgba(20, 40, 160, 0.14)',
-    scrim: ['rgba(2, 6, 26, 0)', 'rgba(2, 6, 26, 0.88)'],
-    accent: '#40e0ff',
+    washMode: 'overlay',
+    photoFilter: 'saturate(1.35) contrast(1.08)',
+    accent: '#00e5ff',
+    band: 'rgba(6, 2, 20, 0.88)',
   },
   pastel: {
-    label: 'Pastel Vice',
-    washes: [
-      { mode: 'soft-light', stops: [[0, '#ffb3d9', 0.6], [0.5, '#c9b8ff', 0.55], [1, '#8fe3ff', 0.55]] },
-      { mode: 'overlay', stops: [[0, '#ff8fc7', 0.22], [1, '#7fd8ff', 0.22]] },
+    name: 'Pastel Vice',
+    // Soft pink and lavender, light and dreamy.
+    wash: [
+      [0.0, 'rgba(255, 183, 213, 0.22)'],
+      [0.55, 'rgba(196, 141, 255, 0.12)'],
+      [1.0, 'rgba(255, 120, 160, 0.26)'],
     ],
-    tint: 'rgba(255, 180, 220, 0.08)',
-    scrim: ['rgba(40, 16, 60, 0)', 'rgba(40, 16, 60, 0.66)'],
-    accent: '#ffb3d9',
+    washMode: 'soft-light',
+    photoFilter: 'saturate(1.1) brightness(1.06)',
+    accent: '#ff7ab8',
+    band: 'rgba(40, 16, 52, 0.82)',
   },
   noir: {
-    label: 'Noir',
-    washes: [
-      { mode: 'saturation', stops: [[0, '#808080', 1], [1, '#808080', 1]] },
-      { mode: 'overlay', stops: [[0, '#ffffff', 0.16], [1, '#000000', 0.42]] },
+    name: 'Noir',
+    // Drained of colour, hard contrast, a single hot accent.
+    wash: [
+      [0.0, 'rgba(0, 0, 0, 0.30)'],
+      [1.0, 'rgba(0, 0, 0, 0.45)'],
     ],
-    tint: 'rgba(0, 0, 0, 0.10)',
-    scrim: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.9)'],
-    accent: '#ffffff',
+    washMode: 'source-over',
+    photoFilter: 'grayscale(0.95) contrast(1.22) brightness(0.94)',
+    accent: '#ff3b30',
+    band: 'rgba(0, 0, 0, 0.9)',
   },
 };
 
