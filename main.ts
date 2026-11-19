@@ -1,45 +1,48 @@
-// Vice Sunset Split — the entry program for make.fun gta6-cover-art-01.
+// Vice Sunset Split — the entrypoint the grader runs (Node 22).
 //
-// Node 22, standard library only. It takes the app/ folder and the screenshots/
-// folder sitting beside this file, copies both into the output directory, and
-// writes output/dossier.json with the kit's vendored library, so the judge can
-// read the app's source and screenshots. Nothing is built and nothing is fetched:
-// the app is plain static files a browser opens offline.
-//
-// Run it outside the grader with:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// It hands the app in: copy app/ and screenshots/ from this repository into
+// the output directory (MAKEFUN_OUTPUT_DIR, or /output when unset), then
+// write /output/dossier.json with buildDossier from vendor/makefun-app.ts,
+// the kit's own copy, unchanged. The copy is plain and ordered, so two runs
+// over the same repository write byte-identical output.
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { copyFileSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
-// The folder this file lives in, and the folder the dossier goes to.
-const repoRoot = fileURLToPath(new URL('.', import.meta.url));
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const repoRoot = dirname(fileURLToPath(import.meta.url));
+const outputRoot = resolve(process.env.MAKEFUN_OUTPUT_DIR ?? '/output');
 
-mkdirSync(outputDir, { recursive: true });
-
-// The whole app, exactly as it sits in the repository.
-cpSync(join(repoRoot, 'app'), join(outputDir, 'app'), { recursive: true });
-
-// The screenshots, when the folder exists (it always does in this repo).
-mkdirSync(join(outputDir, 'screenshots'), { recursive: true });
-if (existsSync(join(repoRoot, 'screenshots'))) {
-  cpSync(join(repoRoot, 'screenshots'), join(outputDir, 'screenshots'), { recursive: true });
+/** Copy a directory tree, entries in code-unit order, files only. */
+function copyTree(sourceDir: string, targetDir: string): void {
+  mkdirSync(targetDir, { recursive: true });
+  const entries = readdirSync(sourceDir).sort();
+  for (const name of entries) {
+    const from = join(sourceDir, name);
+    const to = join(targetDir, name);
+    const info = statSync(from);
+    if (info.isDirectory()) {
+      copyTree(from, to);
+    } else if (info.isFile()) {
+      copyFileSync(from, to);
+    }
+    // Anything else (a link, a socket) is left behind on purpose.
+  }
 }
 
-// The dossier, under the scorer's caps from the kit's gate: the text is capped at
-// 160 KiB, at most 4 screenshots of 256 KiB each, and app/ stays inside 993
-// files / 48 MiB with no path over 1000 bytes, so the whole output fits the
-// platform's own 1000-entry / 64 MiB limit with room to spare.
-writeFileSync(
-  join(outputDir, 'dossier.json'),
-  buildDossier(outputDir, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-    app_path_max_bytes: 1000,
-  }),
-);
+mkdirSync(outputRoot, { recursive: true });
+for (const part of ['app', 'screenshots']) {
+  const target = join(outputRoot, part);
+  rmSync(target, { recursive: true, force: true });
+  copyTree(join(repoRoot, part), target);
+}
+
+const dossier = buildDossier(outputRoot, {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 50331648,
+});
+writeFileSync(join(outputRoot, 'dossier.json'), dossier);
+console.log(`wrote ${join(outputRoot, 'dossier.json')} (${dossier.length} bytes)`);

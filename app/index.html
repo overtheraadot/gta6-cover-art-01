@@ -3,64 +3,111 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vice Sunset Split — GTA 6-style cover maker</title>
+<title>Vice Sunset Split — GTA-style cover art maker</title>
+<meta name="description" content="Turn a photo and a caption into multi-panel GTA-style cover art with a sunset or neon grade, exported as a PNG. Fully offline.">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls" aria-label="Cover controls">
-    <header>
-      <h1>Vice Sunset Split</h1>
-      <p>Turn your photos into a GTA-style multi-panel cover. Pick a layout and a grade, fill the panels, write the caption, export a PNG.</p>
-    </header>
+<header class="topbar">
+  <h1 class="wordmark">Vice Sunset Split</h1>
+  <p class="tagline">Your photo + a caption, cut into slanted panels and graded like a Vice City sunset. No uploads — everything stays on your machine.</p>
+</header>
 
-    <fieldset>
-      <legend>Layout</legend>
-      <div class="row" id="layouts"></div>
-    </fieldset>
+<main class="workspace">
+  <section class="stage-card" aria-label="Cover preview">
+    <div class="stage-wrap">
+      <canvas id="stage" width="640" height="640" aria-label="Live cover preview"></canvas>
+    </div>
+    <div class="stage-foot">
+      <p id="panelLabel">Panel 1 of 2 — drag the preview to pan, scroll to zoom</p>
+      <p id="sizeNote">Square · 1080 × 1080</p>
+    </div>
+  </section>
 
-    <fieldset>
-      <legend>Colour grade</legend>
-      <div class="row" id="grades"></div>
-    </fieldset>
-
-    <label>Caption
-      <input id="caption" type="text" maxlength="40" value="VICE CITY" autocomplete="off">
-    </label>
-    <label>Sub-caption
-      <input id="subcaption" type="text" maxlength="60" value="WELCOME BACK TO LEONIDA" autocomplete="off">
-    </label>
-
-    <fieldset>
-      <legend>Panel <span id="panelName">1</span> of <span id="panelCount">3</span></legend>
-      <p class="hint">Click a panel in the preview to pick it. Drag it to pan its photo, scroll to zoom.</p>
-      <div class="row" id="panelPhotos"></div>
-      <label>Zoom
-        <input id="panelZoom" type="range" min="1" max="2.5" step="0.01" value="1.15">
-      </label>
-      <div class="row">
-        <button id="panelReset" type="button">Reset crop</button>
-        <button id="samePhoto" type="button">One photo everywhere</button>
+  <aside class="controls" aria-label="Cover controls">
+    <section class="control-card">
+      <h2>1 · Photos</h2>
+      <p class="hint">Click a panel on the preview to select it, then load a photo into it — or load one photo for every panel.</p>
+      <div class="file-grid">
+        <label class="file-slot">Panel 1<input id="file0" type="file" accept="image/*"></label>
+        <label class="file-slot">Panel 2<input id="file1" type="file" accept="image/*"></label>
+        <label class="file-slot">Panel 3<input id="file2" type="file" accept="image/*"></label>
       </div>
-      <label class="upload">Upload a photo for this panel
-        <input id="upload" type="file" accept="image/*">
-      </label>
-    </fieldset>
+      <label class="check-line"><input id="samePhoto" type="checkbox" checked> One photo fills every panel</label>
+      <label class="field" for="zoomRange">Zoom — selected panel</label>
+      <input id="zoomRange" type="range" min="100" max="300" value="100" step="5">
+      <div class="button-row">
+        <button id="resetPan" class="ghost" type="button">Reset pan &amp; zoom</button>
+      </div>
+      <label class="field">Try a sample photo</label>
+      <div class="samples-row">
+        <figure>
+          <img data-sample="pier" src="samples/pier.jpg" alt="Sample photo: a pier at sunset">
+          <figcaption>Pier</figcaption>
+        </figure>
+        <figure>
+          <img data-sample="boulevard" src="samples/boulevard.jpg" alt="Sample photo: a boulevard at dusk">
+          <figcaption>Boulevard</figcaption>
+        </figure>
+      </div>
+    </section>
 
-    <fieldset>
-      <legend>Export</legend>
-      <div class="row" id="sizes"></div>
-      <button id="export" type="button" class="primary">Export PNG</button>
-      <button id="demo" type="button">Load the demo photos</button>
-      <p id="status" role="status"></p>
-    </fieldset>
-  </section>
+    <section class="control-card">
+      <h2>2 · Words</h2>
+      <label class="field" for="kickerInput">Kicker</label>
+      <input id="kickerInput" type="text" maxlength="30" value="Grand Sunset">
+      <label class="field" for="captionInput">Caption</label>
+      <input id="captionInput" type="text" maxlength="40" value="Sunset Heist">
+      <label class="field" for="taglineInput">Tagline</label>
+      <input id="taglineInput" type="text" maxlength="60" value="One last job under the neon sky">
+    </section>
 
-  <section class="stage" aria-label="Cover preview">
-    <canvas id="cover" width="1920" height="1080" aria-label="The cover preview"></canvas>
-    <p class="hint">Live preview — what you see is what the PNG holds.</p>
-  </section>
+    <section class="control-card">
+      <h2>3 · Layout</h2>
+      <div class="button-row">
+        <button class="chip active" type="button" data-layout="split">Split<small>2 panels</small></button>
+        <button class="chip" type="button" data-layout="triptych">Triptych<small>3 panels</small></button>
+        <button class="chip" type="button" data-layout="hero">Hero<small>big + strip</small></button>
+      </div>
+    </section>
+
+    <section class="control-card">
+      <h2>4 · Grade</h2>
+      <div class="button-row">
+        <button class="swatch swatch-sunset active" type="button" data-grade="sunset" title="Vice Sunset" aria-label="Vice Sunset grade"></button>
+        <button class="swatch swatch-neon" type="button" data-grade="neon" title="Neon Night" aria-label="Neon Night grade"></button>
+        <button class="swatch swatch-pastel" type="button" data-grade="pastel" title="Pastel Vice" aria-label="Pastel Vice grade"></button>
+        <button class="swatch swatch-noir" type="button" data-grade="noir" title="Noir" aria-label="Noir grade"></button>
+      </div>
+      <p class="hint">Vice Sunset — warm orange into pink. Neon Night — cyan into magenta. Pastel Vice — soft pink and sky. Noir — high-contrast black and white.</p>
+    </section>
+
+    <section class="control-card">
+      <h2>5 · Size &amp; export</h2>
+      <div class="button-row">
+        <button class="chip active" type="button" data-size="square">Square<small>1080 × 1080</small></button>
+        <button class="chip" type="button" data-size="portrait">Portrait<small>1080 × 1350</small></button>
+        <button class="chip" type="button" data-size="wide">Wide<small>1920 × 1080</small></button>
+      </div>
+      <p class="hint">Exports a PNG at the full post size — ready to share.</p>
+      <button id="exportBtn" class="primary" type="button">Export PNG</button>
+      <p id="statusLine" class="status" role="status"></p>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<footer class="foot">
+  <p>Original artwork made in your browser. No Rockstar Games logos, artwork or fonts are used; the condensed type is Noto Sans Condensed under the SIL Open Font License (see <a href="fonts/OFL.txt">fonts/OFL.txt</a>). Sample photos are CC0-style stock included with the app.</p>
+</footer>
+
+<script type="module">
+  import { runShot } from './src/shots.js';
+  import { bootEditor } from './src/editor.js';
+  if (new URLSearchParams(window.location.search).has('shot')) {
+    runShot();
+  } else {
+    bootEditor();
+  }
+</script>
 </body>
 </html>
